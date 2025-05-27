@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- 상단 타이틀 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="독후감"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="16dp" />
+
+    <!-- 구분선 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC" />
+
+    <!-- 책 정보: 이미지 + 텍스트 수평 배치 -->
+
+    <!-- 마음에 드는 구절 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="24dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp">
+
+        <ImageView
+            android:id="@+id/image_book_cover"
+            android:layout_width="100dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_book_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/text_book_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#666666"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end|center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="#DDDDDD"
+                android:paddingHorizontal="16dp"
+                android:text="책 등록하기"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:hint="마음에 드는 구절"
+        android:background="#EEEEEE"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="12dp"
+        android:padding="8dp"
+        android:gravity="top"
+        android:textColorHint="#888888"
+        android:id="@+id/edit_favorite_quote" />
+
+    <!-- 느낀점 -->
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:hint="느낀점"
+        android:background="#EEEEEE"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:padding="8dp"
+        android:gravity="top"
+        android:textColorHint="#888888"
+        android:id="@+id/edit_thoughts" />
+
+    <!-- 여백 뷰 -->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="#E0E0E0"
+        android:text="등록"
+        android:id="@+id/button_search"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_gravity="bottom"
+        android:background="#F5F5F5"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_home" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_note" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="49dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_books" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="퀴즈"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="백설공주는 ○○을 먹었다.\n이때 ○○은 무엇인지 아래에서 고르시오."
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="24dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="#EEEEEE"
+        android:background="@drawable/quiz_box" />
+    
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1. 사과"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="#E0E0E0" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2. 딸기"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="#E0E0E0" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="3. 수박"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="#E0E0E0" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="4. 용과"
+        android:textStyle="bold"
+        android:backgroundTint="#E0E0E0" />
+</LinearLayout>
