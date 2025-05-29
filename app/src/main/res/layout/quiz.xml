@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
+    android:id="@+id/quiz_main"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/quiz_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="홈"
+        android:text="퀴즈"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -31,7 +31,7 @@
             android:src="@android:drawable/ic_menu_search"/>
 
         <EditText
-            android:id="@+id/search"
+            android:id="@+id/quiz_search"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -45,7 +45,7 @@
 
     <!-- 전체보기 -->
     <TextView
-        android:id="@+id/bookCountText"
+        android:id="@+id/quiz_bookCountText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="전체보기"
@@ -59,7 +59,7 @@
         android:paddingTop="8dp">
 
         <GridLayout
-            android:id="@+id/bookGrid"
+            android:id="@+id/quiz_bookGrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="3"
@@ -74,13 +74,13 @@
                 android:gravity="center_horizontal">
 
                 <ImageView
-                    android:id="@+id/bookCover"
+                    android:id="@+id/quiz_bookCover"
                     android:layout_width="100dp"
                     android:layout_height="150dp"
                     android:scaleType="centerCrop" />
 
                 <TextView
-                    android:id="@+id/bookTitle"
+                    android:id="@+id/quiz_bookTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=""
@@ -149,6 +149,6 @@
                 android:src="@drawable/ic_quiz" />
 
 
-    </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

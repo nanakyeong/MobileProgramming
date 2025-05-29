@@ -95,6 +95,8 @@ public class BookReportActivity extends AppCompatActivity {
             buttonSearchInsideDialog.setOnClickListener(v1 -> {
                 String query = editTitle.getText().toString().trim();
                 if (query.isEmpty()) {
+
+
                     Toast.makeText(BookReportActivity.this, "책 제목을 입력하세요.", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -145,7 +147,7 @@ public class BookReportActivity extends AppCompatActivity {
             new androidx.appcompat.app.AlertDialog.Builder(BookReportActivity.this)
                 .setTitle("책 등록하기")
                 .setView(dialogView)
-                .setPositiveButton("등록", (dialog, which) -> {
+                .setPositiveButton("확인", (dialog, which) -> {
                     String title = editTitle.getText().toString().trim();
                     String author = editAuthor.getText().toString().trim();
 
@@ -162,17 +164,16 @@ public class BookReportActivity extends AppCompatActivity {
 
                     textTitle.setText(title);
                     textAuthor.setText(author);
-                    // Only set title, author, and image here.
+
                 })
                 .setNegativeButton("취소", null)
                 .show();
-            // Registration logic for saving the Book (with quote and thoughts) after dialog
         });
 
         // --- Add registration logic for main register button ---
         EditText editQuote = findViewById(R.id.edit_favorite_quote);
         EditText editThoughts = findViewById(R.id.edit_thoughts);
-        Button buttonRegisterMain = findViewById(R.id.button_search); // replace with your actual button ID
+        Button buttonRegisterMain = findViewById(R.id.button_search);
 
         // --- Show/hide edit & delete buttons based on "fromHome" intent extra ---
         Button editButton = findViewById(R.id.button_edit);
@@ -240,11 +241,6 @@ public class BookReportActivity extends AppCompatActivity {
             String quote = editQuote.getText().toString().trim();
             String thoughts = editThoughts.getText().toString().trim();
 
-            Log.d("BOOK_LOG", "입력된 제목: " + title);
-            Log.d("BOOK_LOG", "입력된 저자: " + author);
-            Log.d("BOOK_LOG", "입력된 구절: " + quote);
-            Log.d("BOOK_LOG", "입력된 느낀 점: " + thoughts);
-
             if (title.isEmpty() || author.isEmpty()) {
                 Toast.makeText(BookReportActivity.this, "책 제목과 저자를 입력해주세요.", Toast.LENGTH_SHORT).show();
                 return;
@@ -282,14 +278,19 @@ public class BookReportActivity extends AppCompatActivity {
                         intentToMain.putExtra("bookAuthor", newBook.getAuthor());
                         // Instead of passing image path, pass the image as byte array from imageBookCover
                         Drawable drawable1 = imageBookCover.getDrawable();
+                        byte[] byteArray = null;
                         if (drawable1 != null && drawable1 instanceof android.graphics.drawable.BitmapDrawable) {
                             android.graphics.Bitmap bitmap = ((android.graphics.drawable.BitmapDrawable) drawable1).getBitmap();
                             java.io.ByteArrayOutputStream stream = new java.io.ByteArrayOutputStream();
                             bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] byteArray = stream.toByteArray();
+                            byteArray = stream.toByteArray();
                             intentToMain.putExtra("bookImage", byteArray);
                         }
+                        // Save book title and image bytes for quiz (accumulate in list)
+                        QuizDataHolder.bookTitle.add(newBook.getTitle());
+                        QuizDataHolder.bookImageBytes.add(byteArray);
                         startActivity(intentToMain);
+
                         finish(); // optional: close current activity
                     });
                 } catch (Exception e) {

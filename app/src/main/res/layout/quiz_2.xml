@@ -64,4 +64,6 @@
         android:text="4. 용과"
         android:textStyle="bold"
         android:backgroundTint="#E0E0E0" />
+
+
 </LinearLayout>

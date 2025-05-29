@@ -198,9 +198,10 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/ic_quiz"
                 android:layout_width="49dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_books" />
+                android:src="@drawable/ic_quiz" />
 
 
         </LinearLayout>
