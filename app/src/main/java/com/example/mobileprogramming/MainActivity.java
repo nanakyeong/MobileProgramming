@@ -120,17 +120,21 @@ public class MainActivity extends AppCompatActivity {
                 TextView totalCountText = findViewById(R.id.bookCountText);
                 totalCountText.setText("전체보기(" + allBooks.size() + ")");
                 for (Book book : allBooks) {
+                    // Center-align both image and title, set spacing between items
                     LinearLayout itemLayout = new LinearLayout(this);
                     itemLayout.setOrientation(LinearLayout.VERTICAL);
+                    itemLayout.setGravity(Gravity.CENTER_HORIZONTAL);
                     itemLayout.setPadding(16, 16, 16, 16);
                     GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                    params.width = 0;
-                    params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+                    params.width = GridLayout.LayoutParams.WRAP_CONTENT;
                     params.setMargins(16, 16, 16, 16);
                     itemLayout.setLayoutParams(params);
 
+                    // Set fixed image size and center
                     ImageView imageView = new ImageView(this);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(300, 450));
+                    LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(200, 280); // adjust size as needed
+                    imageParams.gravity = Gravity.CENTER_HORIZONTAL;
+                    imageView.setLayoutParams(imageParams);
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
                     if (book.getImagePath() != null) {
@@ -142,9 +146,17 @@ public class MainActivity extends AppCompatActivity {
 
                     TextView titleView = new TextView(this);
                     titleView.setText(book.getTitle());
-                    titleView.setGravity(Gravity.CENTER_HORIZONTAL);
                     titleView.setTextSize(14);
+                    titleView.setTypeface(titleView.getTypeface(), android.graphics.Typeface.BOLD);
+                    LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    titleParams.gravity = Gravity.CENTER_HORIZONTAL;
+                    titleView.setLayoutParams(titleParams);
                     titleView.setPadding(0, 8, 0, 0);
+                    titleView.setGravity(Gravity.CENTER);
+                    titleView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
                     itemLayout.addView(imageView);
                     itemLayout.addView(titleView);

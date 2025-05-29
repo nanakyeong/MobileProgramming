@@ -112,7 +112,7 @@ public class BookReportActivity extends AppCompatActivity {
                         if (!response.isSuccessful() && response.errorBody() != null) {
                             try {
                                 Log.e("BOOK_API", "에러 메시지: " + response.errorBody().string());
-                            } catch (java.io.IOException e) {
+                            } catch (IOException e) {
                                 Log.e("BOOK_API", "에러 메시지 읽기 실패", e);
                             }
                         }
@@ -263,31 +263,46 @@ public class BookReportActivity extends AppCompatActivity {
             }
 
             Log.d("BOOK_LOG", "DB에 저장할 Book 객체 생성됨");
-            Book newBook = new Book(title, author, imagePath, quote, thoughts);
+            int bookId = getIntent().getIntExtra("bookId", -1);
+            Book bookToSave;
+            if (bookId != -1) {
+                bookToSave = new Book(title, author, imagePath, quote, thoughts);
+                bookToSave.setId(bookId);
+                Log.d("BOOK_LOG", "기존 책 수정: " + bookId);
+            } else {
+                bookToSave = new Book(title, author, imagePath, quote, thoughts);
+                Log.d("BOOK_LOG", "새 책 등록");
+            }
 
+            Book finalBookToSave = bookToSave;
             new Thread(() -> {
                 try {
-                    Log.d("BOOK_LOG", "bookDao.insertBook 호출");
-                    bookDao.insertBook(newBook);
-                    // After insertion, fetch updated books and update RecyclerView
+                    if (bookId != -1) {
+                        bookDao.updateBook(finalBookToSave);
+                        Log.d("BOOK_LOG", "✅ updateBook 호출");
+                    } else {
+                        bookDao.insertBook(finalBookToSave);
+                        Log.d("BOOK_LOG", "✅ insertBook 호출");
+                    }
+                    // After insertion or update, fetch updated books and update RecyclerView
                     java.util.List<Book> updatedBooks = bookDao.getAllBooks();
                     runOnUiThread(() -> {
                         Toast.makeText(BookReportActivity.this, "책이 등록되었습니다.", Toast.LENGTH_SHORT).show();
                         Intent intentToMain = new Intent(BookReportActivity.this, MainActivity.class);
-                        intentToMain.putExtra("bookTitle", newBook.getTitle());
-                        intentToMain.putExtra("bookAuthor", newBook.getAuthor());
+                        intentToMain.putExtra("bookTitle", finalBookToSave.getTitle());
+                        intentToMain.putExtra("bookAuthor", finalBookToSave.getAuthor());
                         // Instead of passing image path, pass the image as byte array from imageBookCover
                         Drawable drawable1 = imageBookCover.getDrawable();
                         byte[] byteArray = null;
-                        if (drawable1 != null && drawable1 instanceof android.graphics.drawable.BitmapDrawable) {
-                            android.graphics.Bitmap bitmap = ((android.graphics.drawable.BitmapDrawable) drawable1).getBitmap();
+                        if (drawable1 != null && drawable1 instanceof BitmapDrawable) {
+                            Bitmap bitmap = ((BitmapDrawable) drawable1).getBitmap();
                             java.io.ByteArrayOutputStream stream = new java.io.ByteArrayOutputStream();
-                            bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream);
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                             byteArray = stream.toByteArray();
                             intentToMain.putExtra("bookImage", byteArray);
                         }
                         // Save book title and image bytes for quiz (accumulate in list)
-                        QuizDataHolder.bookTitle.add(newBook.getTitle());
+                        QuizDataHolder.bookTitle.add(finalBookToSave.getTitle());
                         QuizDataHolder.bookImageBytes.add(byteArray);
                         startActivity(intentToMain);
 
@@ -330,7 +345,7 @@ public class BookReportActivity extends AppCompatActivity {
             if (passedQuote != null) edit_favorite_quote.setText(passedQuote);
             if (passedThoughts != null) edit_thought.setText(passedThoughts);
             if (imageBytes != null) {
-                android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                Bitmap bitmap = android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 imageBookCover.setImageBitmap(bitmap);
                 imageBookCover.setVisibility(View.VISIBLE);
                 Log.d("BOOK_INTENT", "이미지 설정됨");
@@ -339,7 +354,7 @@ public class BookReportActivity extends AppCompatActivity {
             // [ADD] Handle imagePath after imageBytes
             if (imagePath != null) {
                 Log.d("BOOK_INTENT", "받은 이미지 경로: " + imagePath);
-                android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeFile(imagePath);
+                Bitmap bitmap = android.graphics.BitmapFactory.decodeFile(imagePath);
                 imageBookCover.setImageBitmap(bitmap);
                 imageBookCover.setVisibility(View.VISIBLE);
             }
