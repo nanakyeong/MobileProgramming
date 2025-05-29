@@ -17,4 +17,22 @@
         android:layout_height="wrap_content"
         android:hint="책 저자"
         android:layout_marginTop="10dp" />
+
+    <Button
+        android:id="@+id/buttonSearchInsideDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="검색"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="end" />
+
+    <ImageView
+        android:id="@+id/imageCover"
+        android:layout_width="80dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:scaleType="centerCrop" />
+
+
 </LinearLayout>

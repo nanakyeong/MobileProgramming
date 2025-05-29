@@ -22,4 +22,32 @@ public class Book {
         this.quote = quote;
         this.thoughts = thoughts;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public String getQuote() {
+        return quote;
+    }
+
+    public String getThoughts() {
+        return thoughts;
+    }
 }

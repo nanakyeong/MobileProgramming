@@ -17,4 +17,7 @@ public interface BookDao {
 
     @Query("SELECT * FROM Book WHERE id = :id LIMIT 1")
     Book getBookById(int id);
+
+    @Query("SELECT * FROM Book ORDER BY id DESC LIMIT 1")
+    Book getLatestBook();
 }
