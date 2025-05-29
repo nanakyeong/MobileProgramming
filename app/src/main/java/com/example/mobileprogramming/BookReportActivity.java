@@ -10,6 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -169,6 +174,65 @@ public class BookReportActivity extends AppCompatActivity {
         EditText editThoughts = findViewById(R.id.edit_thoughts);
         Button buttonRegisterMain = findViewById(R.id.button_search); // replace with your actual button ID
 
+        // --- Show/hide edit & delete buttons based on "fromHome" intent extra ---
+        Button editButton = findViewById(R.id.button_edit);
+        Button deleteButton = findViewById(R.id.button_delete);
+
+        Intent incomingIntent = getIntent();
+        boolean fromHome = incomingIntent.getBooleanExtra("fromHome", false);
+
+        if (fromHome) {
+            editButton.setVisibility(View.VISIBLE);
+            deleteButton.setVisibility(View.VISIBLE);
+            edit_favorite_quote.setEnabled(false);
+            edit_thought.setEnabled(false);
+        } else {
+            editButton.setVisibility(View.GONE);
+            deleteButton.setVisibility(View.GONE);
+            edit_favorite_quote.setEnabled(true);
+            edit_thought.setEnabled(true);
+        }
+
+        // Click listener for edit button to enable editing
+        editButton.setOnClickListener(v -> {
+            edit_favorite_quote.setEnabled(true);
+            edit_thought.setEnabled(true);
+            Toast.makeText(BookReportActivity.this, "이제 수정 가능합니다.", Toast.LENGTH_SHORT).show();
+        });
+
+        // Click listener for delete button with confirmation dialog and DB deletion
+        deleteButton.setOnClickListener(v -> {
+            new androidx.appcompat.app.AlertDialog.Builder(BookReportActivity.this)
+                .setTitle("삭제 확인")
+                .setMessage("이 독후감을 정말 삭제하시겠습니까?")
+                .setPositiveButton("삭제", (dialog, which) -> {
+                    Intent intent = getIntent();
+                    int bookId = intent.getIntExtra("bookId", -1);
+                    if (bookId != -1) {
+                        new Thread(() -> {
+                            BookDao bookDao = AppDatabase.getInstance(this).bookDao();
+                            Book bookToDelete = bookDao.getBookById(bookId);
+                            if (bookToDelete != null) {
+                                bookDao.deleteBook(bookToDelete);
+                                Log.d("BOOK_LOG", "✅ 삭제 완료: " + bookToDelete.getTitle());
+                            } else {
+                                Log.d("BOOK_LOG", "⚠️ 삭제할 Book을 찾을 수 없음");
+                            }
+
+                            runOnUiThread(() -> {
+                                Toast.makeText(this, "독후감이 삭제되었습니다", Toast.LENGTH_SHORT).show();
+                                Intent intentToMain = new Intent(this, MainActivity.class);
+                                intentToMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intentToMain);
+                                finish();
+                            });
+                        }).start();
+                    }
+                })
+                .setNegativeButton("취소", null)
+                .show();
+        });
+
         buttonRegisterMain.setOnClickListener(view -> {
             Log.d("BOOK_LOG", "등록 버튼 클릭됨");
             String title = textTitle.getText().toString().trim();
@@ -185,9 +249,25 @@ public class BookReportActivity extends AppCompatActivity {
                 Toast.makeText(BookReportActivity.this, "책 제목과 저자를 입력해주세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
+            // 이미지 저장 코드 추가
+            Drawable drawable = imageBookCover.getDrawable();
+            String imagePath = null;
+
+            if (drawable != null) {
+                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                File imageFile = saveBitmapToFile(bitmap); // 절대경로 반환
+                if (imageFile != null) {
+                    imagePath = imageFile.getAbsolutePath();
+                    Log.d("BOOK_LOG", "📂 저장된 이미지 절대경로: " + imagePath);
+                } else {
+                    Log.d("BOOK_LOG", "이미지 저장 실패함");
+                }
+            } else {
+                Log.d("BOOK_LOG", "Drawable이 null임, 이미지 없음");
+            }
 
             Log.d("BOOK_LOG", "DB에 저장할 Book 객체 생성됨");
-            Book newBook = new Book(title, author, "book_cover", quote, thoughts);
+            Book newBook = new Book(title, author, imagePath, quote, thoughts);
 
             new Thread(() -> {
                 try {
@@ -197,19 +277,19 @@ public class BookReportActivity extends AppCompatActivity {
                     java.util.List<Book> updatedBooks = bookDao.getAllBooks();
                     runOnUiThread(() -> {
                         Toast.makeText(BookReportActivity.this, "책이 등록되었습니다.", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(BookReportActivity.this, MainActivity.class);
-                        intent.putExtra("bookTitle", newBook.getTitle());
-                        intent.putExtra("bookAuthor", newBook.getAuthor());
+                        Intent intentToMain = new Intent(BookReportActivity.this, MainActivity.class);
+                        intentToMain.putExtra("bookTitle", newBook.getTitle());
+                        intentToMain.putExtra("bookAuthor", newBook.getAuthor());
                         // Instead of passing image path, pass the image as byte array from imageBookCover
-                        Drawable drawable = imageBookCover.getDrawable();
-                        if (drawable != null && drawable instanceof android.graphics.drawable.BitmapDrawable) {
-                            android.graphics.Bitmap bitmap = ((android.graphics.drawable.BitmapDrawable) drawable).getBitmap();
+                        Drawable drawable1 = imageBookCover.getDrawable();
+                        if (drawable1 != null && drawable1 instanceof android.graphics.drawable.BitmapDrawable) {
+                            android.graphics.Bitmap bitmap = ((android.graphics.drawable.BitmapDrawable) drawable1).getBitmap();
                             java.io.ByteArrayOutputStream stream = new java.io.ByteArrayOutputStream();
                             bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream);
                             byte[] byteArray = stream.toByteArray();
-                            intent.putExtra("bookImage", byteArray);
+                            intentToMain.putExtra("bookImage", byteArray);
                         }
-                        startActivity(intent);
+                        startActivity(intentToMain);
                         finish(); // optional: close current activity
                     });
                 } catch (Exception e) {
@@ -226,6 +306,9 @@ public class BookReportActivity extends AppCompatActivity {
             String passedQuote = intent.getStringExtra("bookQuote");
             String passedThoughts = intent.getStringExtra("bookThoughts");
             byte[] imageBytes = intent.getByteArrayExtra("bookImage");
+
+            // [ADD] Handle imagePath extra
+            String imagePath = intent.getStringExtra("bookImagePath");
 
             if (passedTitle != null) {
                 Log.d("BOOK_INTENT", "받은 제목: " + passedTitle);
@@ -248,7 +331,16 @@ public class BookReportActivity extends AppCompatActivity {
             if (imageBytes != null) {
                 android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 imageBookCover.setImageBitmap(bitmap);
+                imageBookCover.setVisibility(View.VISIBLE);
                 Log.d("BOOK_INTENT", "이미지 설정됨");
+            }
+
+            // [ADD] Handle imagePath after imageBytes
+            if (imagePath != null) {
+                Log.d("BOOK_INTENT", "받은 이미지 경로: " + imagePath);
+                android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeFile(imagePath);
+                imageBookCover.setImageBitmap(bitmap);
+                imageBookCover.setVisibility(View.VISIBLE);
             }
         }
 
@@ -256,28 +348,23 @@ public class BookReportActivity extends AppCompatActivity {
         if (homeButton != null) {
             homeButton.setOnClickListener(v -> {
                 Intent intentHome = new Intent(BookReportActivity.this, MainActivity.class);
-
-                String title = textTitle.getText().toString().trim();
-                String author = textAuthor.getText().toString().trim();
-                String quote = edit_favorite_quote.getText().toString().trim();
-                String thoughts = edit_thought.getText().toString().trim();
-
-                intentHome.putExtra("bookTitle", title);
-                intentHome.putExtra("bookAuthor", author);
-                intentHome.putExtra("bookQuote", quote);
-                intentHome.putExtra("bookThoughts", thoughts);
-
-                Drawable drawable = imageBookCover.getDrawable();
-                if (drawable instanceof android.graphics.drawable.BitmapDrawable) {
-                    android.graphics.Bitmap bitmap = ((android.graphics.drawable.BitmapDrawable) drawable).getBitmap();
-                    java.io.ByteArrayOutputStream stream = new java.io.ByteArrayOutputStream();
-                    bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] byteArray = stream.toByteArray();
-                    intentHome.putExtra("bookImage", byteArray);
-                }
-
                 startActivity(intentHome);
             });
+        }
+    }
+    // Helper method to save bitmap to file and return File object (with absolute path)
+    private File saveBitmapToFile(Bitmap bitmap) {
+        try {
+            File file = new File(getFilesDir(), "book_cover_" + System.currentTimeMillis() + ".png");
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+            Log.d("BOOK_LOG", "📂 저장된 이미지 절대경로: " + file.getAbsolutePath());
+            return file;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
