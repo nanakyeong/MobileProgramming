@@ -44,37 +44,40 @@ public class QuizActivity extends AppCompatActivity {
         }).start();
     }
 
+    // Updated to match main screen: three-column horizontal layout, image and title centered
     private void updateQuizUI(List<Book> bookList) {
         GridLayout quizGrid = findViewById(R.id.quiz_bookGrid);
         if (quizGrid != null) {
             quizGrid.removeAllViews();
-            quizGrid.setColumnCount(3); // 3 columns from left to right
+            quizGrid.setColumnCount(3); // Ensure horizontal row-wise arrangement
+
             for (Book book : bookList) {
-                Log.d("QUIZ_UI", "제목: " + book.getTitle());
                 String title = book.getTitle();
                 String imagePath = book.getImagePath();
 
-                // Create vertical LinearLayout for each item
+                // Create a vertical LinearLayout for each book item
                 LinearLayout itemLayout = new LinearLayout(this);
                 itemLayout.setOrientation(LinearLayout.VERTICAL);
                 itemLayout.setGravity(Gravity.CENTER_HORIZONTAL);
+
                 GridLayout.LayoutParams gridParams = new GridLayout.LayoutParams();
-                gridParams.width = 0;
+                gridParams.width = GridLayout.LayoutParams.WRAP_CONTENT;
                 gridParams.height = LayoutParams.WRAP_CONTENT;
-                gridParams.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+                gridParams.setMargins(24, 24, 24, 24); // Optional: Add spacing between items
                 itemLayout.setLayoutParams(gridParams);
                 int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
                 itemLayout.setPadding(padding, padding, padding, padding);
 
-                // ImageView
+                // ImageView setup
                 ImageView imageView = new ImageView(this);
                 LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
-                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics()),
-                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics())
+                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics()),
+                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics())
                 );
                 imageParams.gravity = Gravity.CENTER_HORIZONTAL;
                 imageView.setLayoutParams(imageParams);
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
                 Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
                 if (bitmap != null) {
                     imageView.setImageBitmap(bitmap);
@@ -83,13 +86,18 @@ public class QuizActivity extends AppCompatActivity {
                 }
                 itemLayout.addView(imageView);
 
-                // Title
+                // Title TextView setup
                 TextView titleView = new TextView(this);
                 titleView.setText(title);
                 titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
                 titleView.setGravity(Gravity.CENTER_HORIZONTAL);
+                titleView.setMaxLines(2);
+                titleView.setLayoutParams(new LinearLayout.LayoutParams(
+                        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT
+                ));
                 itemLayout.addView(titleView);
 
+                // Add item layout to GridLayout
                 quizGrid.addView(itemLayout);
             }
         }
