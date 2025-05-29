@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // Set fixed image size and center
                     ImageView imageView = new ImageView(this);
-                    LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(200, 280); // adjust size as needed
+                    LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(300, 450); // adjust size as needed
                     imageParams.gravity = Gravity.CENTER_HORIZONTAL;
                     imageView.setLayoutParams(imageParams);
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
