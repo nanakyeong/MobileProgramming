@@ -24,6 +24,14 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -175,7 +183,119 @@ public class MainActivity extends AppCompatActivity {
 
                     bookGrid.addView(itemLayout);
                 }
+
+                // Add search functionality with cosine similarity
+                EditText search = findViewById(R.id.search);
+                search.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        String query = s.toString();
+                        List<Book> filteredBooks = new java.util.ArrayList<>();
+                        for (Book book : allBooks) {
+                            if (calculateCosineSimilarity(book.getTitle(), query) > 0.3) { // Adjust threshold as needed
+                                filteredBooks.add(book);
+                            }
+                        }
+
+                        bookGrid.removeAllViews();
+                        for (Book book : filteredBooks) {
+                            // Reuse the book display layout logic from runOnUiThread
+                            LinearLayout itemLayout = new LinearLayout(MainActivity.this);
+                            itemLayout.setOrientation(LinearLayout.VERTICAL);
+                            itemLayout.setGravity(Gravity.CENTER_HORIZONTAL);
+                            itemLayout.setPadding(16, 16, 16, 16);
+                            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+                            params.width = GridLayout.LayoutParams.WRAP_CONTENT;
+                            params.setMargins(16, 16, 16, 16);
+                            itemLayout.setLayoutParams(params);
+
+                            ImageView imageView = new ImageView(MainActivity.this);
+                            LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(300, 450);
+                            imageParams.gravity = Gravity.CENTER_HORIZONTAL;
+                            imageView.setLayoutParams(imageParams);
+                            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                            if (book.getImagePath() != null) {
+                                Bitmap bitmap = BitmapFactory.decodeFile(book.getImagePath());
+                                if (bitmap != null) {
+                                    imageView.setImageBitmap(bitmap);
+                                }
+                            }
+
+                            TextView titleView = new TextView(MainActivity.this);
+                            titleView.setText(book.getTitle());
+                            titleView.setTextSize(14);
+                            titleView.setTypeface(titleView.getTypeface(), android.graphics.Typeface.BOLD);
+                            LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            titleParams.gravity = Gravity.CENTER_HORIZONTAL;
+                            titleView.setLayoutParams(titleParams);
+                            titleView.setPadding(0, 8, 0, 0);
+                            titleView.setGravity(Gravity.CENTER);
+                            titleView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+                            itemLayout.addView(imageView);
+                            itemLayout.addView(titleView);
+
+                            itemLayout.setOnClickListener(v -> {
+                                Intent reportIntent = new Intent(MainActivity.this, BookReportActivity.class);
+                                reportIntent.putExtra("bookId", book.getId());
+                                reportIntent.putExtra("bookTitle", book.getTitle());
+                                reportIntent.putExtra("bookAuthor", book.getAuthor());
+                                reportIntent.putExtra("bookQuote", book.getQuote());
+                                reportIntent.putExtra("bookThoughts", book.getThoughts());
+                                reportIntent.putExtra("bookImagePath", book.getImagePath());
+                                reportIntent.putExtra("fromHome", true);
+                                startActivity(reportIntent);
+                            });
+
+                            bookGrid.addView(itemLayout);
+                        }
+                    }
+                });
             });
         }).start();
+    }
+
+    // Cosine similarity method for search
+    private double calculateCosineSimilarity(String str1, String str2) {
+        str1 = str1.toLowerCase();
+        str2 = str2.toLowerCase();
+        Map<Character, Integer> freq1 = new HashMap<>();
+        Map<Character, Integer> freq2 = new HashMap<>();
+
+        for (char c : str1.toCharArray()) {
+            freq1.put(c, freq1.getOrDefault(c, 0) + 1);
+        }
+        for (char c : str2.toCharArray()) {
+            freq2.put(c, freq2.getOrDefault(c, 0) + 1);
+        }
+
+        Set<Character> allChars = new HashSet<>();
+        allChars.addAll(freq1.keySet());
+        allChars.addAll(freq2.keySet());
+
+        double dotProduct = 0;
+        double normA = 0;
+        double normB = 0;
+
+        for (char c : allChars) {
+            int x = freq1.getOrDefault(c, 0);
+            int y = freq2.getOrDefault(c, 0);
+            dotProduct += x * y;
+            normA += x * x;
+            normB += y * y;
+        }
+
+        if (normA == 0 || normB == 0) return 0.0;
+        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
     }
 }

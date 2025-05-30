@@ -28,6 +28,22 @@ public class QuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quiz);
 
+        ImageView homeButton = findViewById(R.id.ic_home);
+        if (homeButton != null) {
+            homeButton.setOnClickListener(v -> {
+                Intent intentHome = new Intent(QuizActivity.this, MainActivity.class);
+                startActivity(intentHome);
+            });
+        }
+
+        ImageView noteButton = findViewById(R.id.ic_note);
+        if (noteButton != null) {
+            noteButton.setOnClickListener(v -> {
+                Intent intentNote = new Intent(QuizActivity.this, BookReportActivity.class);
+                startActivity(intentNote);
+            });
+        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {

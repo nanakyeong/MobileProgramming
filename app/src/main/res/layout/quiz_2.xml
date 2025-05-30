@@ -22,9 +22,10 @@
         android:background="#DDDDDD" />
 
     <TextView
+        android:id="@+id/quiz_box2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="백설공주는 ○○을 먹었다.\n이때 ○○은 무엇인지 아래에서 고르시오."
+        android:text=""
         android:textSize="18sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -35,33 +36,41 @@
         android:background="@drawable/quiz_box" />
     
     <Button
+        android:id="@+id/quiz1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="1. 사과"
+        android:text=""
+        android:textColor="@color/black"
         android:textStyle="bold"
         android:layout_marginBottom="12dp"
         android:backgroundTint="#E0E0E0" />
 
     <Button
+        android:id="@+id/quiz2"
+        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="2. 딸기"
+        android:text=""
         android:textStyle="bold"
         android:layout_marginBottom="12dp"
         android:backgroundTint="#E0E0E0" />
 
     <Button
+        android:id="@+id/quiz3"
+        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="3. 수박"
+        android:text=""
         android:textStyle="bold"
         android:layout_marginBottom="12dp"
         android:backgroundTint="#E0E0E0" />
 
     <Button
+        android:id="@+id/quiz4"
+        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="4. 용과"
+        android:text=""
         android:textStyle="bold"
         android:backgroundTint="#E0E0E0" />
 

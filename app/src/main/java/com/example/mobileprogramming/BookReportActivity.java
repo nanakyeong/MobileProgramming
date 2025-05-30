@@ -367,6 +367,14 @@ public class BookReportActivity extends AppCompatActivity {
                 startActivity(intentHome);
             });
         }
+
+        ImageView quizButton = findViewById(R.id.ic_quiz);
+        if (quizButton != null) {
+            quizButton.setOnClickListener(v -> {
+                Intent intentQuiz = new Intent(BookReportActivity.this, QuizActivity.class);
+                startActivity(intentQuiz);
+            });
+        }
     }
     // Helper method to save bitmap to file and return File object (with absolute path)
     private File saveBitmapToFile(Bitmap bitmap) {

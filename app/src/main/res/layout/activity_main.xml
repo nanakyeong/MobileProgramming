@@ -105,6 +105,7 @@
         android:orientation="horizontal"
         android:background="#F5F5F5"
         android:gravity="center"
+        android:layout_marginBottom="40dp"
         android:weightSum="4">
 
         <LinearLayout
