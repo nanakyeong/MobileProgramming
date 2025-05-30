@@ -30,6 +30,10 @@
             android:name=".QuizActivity"
             android:exported="true"
             android:theme="@style/Theme.MobileProgramming.NoActionBar" />
+        <activity
+            android:name=".QuizDetailActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MobileProgramming.NoActionBar" />
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

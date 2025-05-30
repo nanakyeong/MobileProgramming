@@ -53,6 +53,7 @@ public class QuizActivity extends AppCompatActivity {
 
             for (Book book : bookList) {
                 String title = book.getTitle();
+                String author = book.getAuthor();
                 String imagePath = book.getImagePath();
 
                 // Create a vertical LinearLayout for each book item
@@ -84,6 +85,13 @@ public class QuizActivity extends AppCompatActivity {
                 } else {
                     imageView.setImageResource(android.R.drawable.ic_menu_report_image);
                 }
+                imageView.setOnClickListener(v -> {
+                    Intent intent = new Intent(QuizActivity.this, QuizDetailActivity.class);
+                    intent.putExtra("bookTitle", title);
+                    intent.putExtra("bookAuthor", author);
+                    intent.putExtra("bookImagePath", imagePath);
+                    startActivity(intent);
+                });
                 itemLayout.addView(imageView);
 
                 // Title TextView setup
@@ -96,6 +104,15 @@ public class QuizActivity extends AppCompatActivity {
                         LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT
                 ));
                 itemLayout.addView(titleView);
+
+                // Add click listener to open QuizDetailActivity with book details
+                itemLayout.setOnClickListener(v -> {
+                    Intent intent = new Intent(QuizActivity.this, QuizDetailActivity.class);
+                    intent.putExtra("bookTitle", title);
+                    intent.putExtra("bookAuthor", author);
+                    intent.putExtra("bookImagePath", imagePath);
+                    startActivity(intent);
+                });
 
                 // Add item layout to GridLayout
                 quizGrid.addView(itemLayout);
