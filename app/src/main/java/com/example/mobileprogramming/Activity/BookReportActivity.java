@@ -92,7 +92,6 @@ public class BookReportActivity extends AppCompatActivity {
         });
 
         Button buttonRegister = findViewById(R.id.button);
-        // Hide "책 등록하기" button if book is already passed via intent
         Intent checkIntent = getIntent();
         if (checkIntent != null) {
             String existingTitle = checkIntent.getStringExtra("bookTitle");
@@ -208,14 +207,12 @@ public class BookReportActivity extends AppCompatActivity {
             edit_thought.setEnabled(true);
         }
 
-        // Click listener for edit button to enable editing
         editButton.setOnClickListener(v -> {
             edit_favorite_quote.setEnabled(true);
             edit_thought.setEnabled(true);
             Toast.makeText(BookReportActivity.this, "이제 수정 가능합니다.", Toast.LENGTH_SHORT).show();
         });
 
-        // Click listener for delete button with confirmation dialog and DB deletion
         deleteButton.setOnClickListener(v -> {
             new androidx.appcompat.app.AlertDialog.Builder(BookReportActivity.this)
                 .setTitle("삭제 확인")
@@ -255,7 +252,6 @@ public class BookReportActivity extends AppCompatActivity {
             String quote = editQuote.getText().toString().trim();
             String thoughts = editThoughts.getText().toString().trim();
 
-            // 개별 입력항목별로 안내 메시지
             if (title.isEmpty()) {
                 Toast.makeText(BookReportActivity.this, "책 제목을 입력해주세요.", Toast.LENGTH_SHORT).show();
                 return;
@@ -275,7 +271,6 @@ public class BookReportActivity extends AppCompatActivity {
 
             final int finalBookId = getIntent().getIntExtra("bookId", -1);
             new Thread(() -> {
-                // If no duplicate, proceed to insert or update the book
                 runOnUiThread(() -> {
                     Drawable drawable = imageBookCover.getDrawable();
                     String imagePath = null;
@@ -288,7 +283,6 @@ public class BookReportActivity extends AppCompatActivity {
                         }
                     }
 
-                    // Set readDateMillis to midnight today
                     java.util.Calendar calendar = java.util.Calendar.getInstance();
                     calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
                     calendar.set(java.util.Calendar.MINUTE, 0);
@@ -343,7 +337,7 @@ public class BookReportActivity extends AppCompatActivity {
                 });
             }).start();
         });
-        // Handle intent extras to pre-fill fields if provided
+
         Intent intent = getIntent();
         if (intent != null) {
             String passedTitle = intent.getStringExtra("bookTitle");
@@ -352,7 +346,6 @@ public class BookReportActivity extends AppCompatActivity {
             String passedThoughts = intent.getStringExtra("bookThoughts");
             byte[] imageBytes = intent.getByteArrayExtra("bookImage");
 
-            // [ADD] Handle imagePath extra
             String imagePath = intent.getStringExtra("bookImagePath");
 
             if (passedTitle != null) {

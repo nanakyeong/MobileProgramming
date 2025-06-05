@@ -17,8 +17,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Random;
 
-// Removed incorrect Callback import
-
 import okhttp3.Response;
 
 public class QuizDetailActivity extends AppCompatActivity {
@@ -33,7 +31,7 @@ public class QuizDetailActivity extends AppCompatActivity {
     private Button mcqButton3;
     private Button mcqButton4;
 
-    private String prompt; // Make prompt a class field
+    private String prompt;
     private boolean isOXQuiz;
 
     @Override
@@ -43,14 +41,11 @@ public class QuizDetailActivity extends AppCompatActivity {
         String title = getIntent().getStringExtra("bookTitle");
         String author = getIntent().getStringExtra("bookAuthor");
 
-        Log.d("QUIZ_DETAIL_INTENT", "제목: " + title);
-        Log.d("QUIZ_DETAIL_INTENT", "저자: " + author);
-
         loadNextQuiz();
     }
 
     private void loadNextQuiz() {
-        isOXQuiz = new Random().nextBoolean(); // moved here
+        isOXQuiz = new Random().nextBoolean();
         String title = getIntent().getStringExtra("bookTitle");
         String author = getIntent().getStringExtra("bookAuthor");
 
@@ -89,12 +84,10 @@ public class QuizDetailActivity extends AppCompatActivity {
                             boolean answer = quizData.getBoolean("answer");
 
                             runOnUiThread(() -> {
-                                // Always ensure correct layout before accessing views
                                 setContentView(R.layout.quiz_1);
                                 TextView questionView = findViewById(R.id.quiz_question);
                                 Button btnO = findViewById(R.id.quiz_o);
                                 Button btnX = findViewById(R.id.quiz_x);
-                                // Only access views if present
                                 if (questionView != null) {
                                     questionView.setText(question);
                                 }
@@ -124,14 +117,13 @@ public class QuizDetailActivity extends AppCompatActivity {
                             }
 
                             runOnUiThread(() -> {
-                                // Always ensure correct layout before accessing views
                                 setContentView(R.layout.quiz_2);
                                 TextView questionView = findViewById(R.id.quiz_box2);
                                 Button btn1 = findViewById(R.id.quiz1);
                                 Button btn2 = findViewById(R.id.quiz2);
                                 Button btn3 = findViewById(R.id.quiz3);
                                 Button btn4 = findViewById(R.id.quiz4);
-                                // Only access views if present
+
                                 if (questionView != null && btn1 != null && btn2 != null && btn3 != null && btn4 != null) {
                                     questionView.setText(question);
                                     btn1.setText(choices[0]);

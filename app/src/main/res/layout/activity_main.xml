@@ -16,7 +16,6 @@
         android:gravity="center"
         android:padding="16dp"/>
 
-    <!-- 검색창 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -43,7 +42,6 @@
             android:minHeight="48dp"/>
     </LinearLayout>
 
-    <!-- 전체보기 및 날짜 필터 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

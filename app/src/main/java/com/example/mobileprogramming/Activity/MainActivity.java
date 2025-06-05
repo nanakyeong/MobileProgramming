@@ -40,11 +40,6 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.buttonDateFilter).setOnClickListener(v -> {
-            Intent calendarIntent = new Intent(MainActivity.this, CalendarActivity.class);
-            startActivity(calendarIntent);
-        });
-
         Intent intent = getIntent();
         TextView textTitle = findViewById(R.id.bookTitle);
         byte[] imageBytes = intent.getByteArrayExtra("bookImage");
@@ -62,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 ImageView imageCover = findViewById(R.id.bookCover);
                 imageCover.setImageBitmap(bitmap);
                 imageCover.setVisibility(View.VISIBLE);
-                textTitle.setText(titleFromIntent != null ? titleFromIntent : ""); // set title if available
+                textTitle.setText(titleFromIntent != null ? titleFromIntent : "");
                 textTitle.setVisibility(View.VISIBLE);
             }
         } else {
@@ -169,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
                 TextView totalCountText = findViewById(R.id.bookCountText);
                 totalCountText.setText("전체보기(" + finalAllBooks.size() + ")");
                 for (Book book : finalAllBooks) {
-                    // Center-align both image and title, set spacing between items
                     LinearLayout itemLayout = new LinearLayout(this);
                     itemLayout.setOrientation(LinearLayout.VERTICAL);
                     itemLayout.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -179,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
                     params.setMargins(10, 10, 10, 10);
                     itemLayout.setLayoutParams(params);
 
-                    // Set fixed image size and center
                     ImageView imageView = new ImageView(this);
                     LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(280, 430);
                     imageView.setLayoutParams(imageParams);
@@ -231,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
                     bookGrid.addView(itemLayout);
                 }
 
-                // Add search functionality with cosine similarity
                 EditText search = findViewById(R.id.search);
                 search.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -245,14 +237,13 @@ public class MainActivity extends AppCompatActivity {
                         String query = s.toString();
                         List<Book> filteredBooks = new java.util.ArrayList<>();
                         for (Book book : finalAllBooks) {
-                            if (calculateCosineSimilarity(book.getTitle(), query) > 0.3) { // Adjust threshold as needed
+                            if (calculateCosineSimilarity(book.getTitle(), query) > 0.3) {
                                 filteredBooks.add(book);
                             }
                         }
 
                         bookGrid.removeAllViews();
                         for (Book book : filteredBooks) {
-                            // Reuse the book display layout logic from runOnUiThread
                             LinearLayout itemLayout = new LinearLayout(MainActivity.this);
                             itemLayout.setOrientation(LinearLayout.VERTICAL);
                             itemLayout.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -319,7 +310,6 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    // Cosine similarity method for search
     private double calculateCosineSimilarity(String str1, String str2) {
         str1 = str1.toLowerCase();
         str2 = str2.toLowerCase();

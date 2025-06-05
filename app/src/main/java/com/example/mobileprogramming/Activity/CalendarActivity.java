@@ -31,10 +31,8 @@ public class CalendarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calendar);
 
-        // Inserted code for reading decorated dates from DB
         MaterialCalendarView calendarView = findViewById(R.id.calendarView);
 
-        // Use a background thread for DB operations
         new Thread(() -> {
             db = AppDatabase.getInstance(getApplicationContext());
             List<Book> readBooks = db.bookDao().getBooksWithReadDate();
@@ -45,7 +43,7 @@ public class CalendarActivity extends AppCompatActivity {
                     readDates.add(book.getReadDateMillis());
                 }
             }
-            // 📅 읽은 날짜 로그 출력
+
             for (Long date : readDates) {
                 Log.d("CalendarActivity", "📅 읽은 날짜: " + date);
             }
@@ -61,10 +59,6 @@ public class CalendarActivity extends AppCompatActivity {
         db = AppDatabase.getInstance(getApplicationContext());
 
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
-            Log.d("CalendarDebug", "📆 date.getYear(): " + date.getYear());
-            Log.d("CalendarDebug", "📆 date.getMonth(): " + date.getMonth());
-            Log.d("CalendarDebug", "📆 date.getDay(): " + date.getDay());
-            Log.d("CalendarDebug", "📆 Full date: " + date.getDate());
             long millis = convertToMillis(date);
             textSelectedDate.setText(formatDate(millis));
             loadBooksOnDate(millis);
@@ -86,19 +80,12 @@ public class CalendarActivity extends AppCompatActivity {
         new Thread(() -> {
             long startOfDay = getStartOfDay(millis);
             long endOfDay = getEndOfDay(millis);
-            // 추가 로그
-            Log.d("CalendarDebug", "날짜 클릭: " + millis);
-            Log.d("CalendarDebug", "검색 범위: " + startOfDay + " ~ " + endOfDay);
+
             List<Book> allBooks = db.bookDao().getAllBooks();
             for (Book b : allBooks) {
                 Log.d("CalendarDebug", "전체 책 readDateMillis: " + b.getReadDateMillis() + " (" + b.getTitle() + ")");
             }
             List<Book> books = db.bookDao().getBooksByDate(startOfDay, endOfDay);
-
-            // ✅ 여기에 로그 추가!
-            for (Book book : books) {
-                Log.d("CalendarDebug", "조회된 책: " + book.title + " / " + book.readDateMillis);
-            }
 
             runOnUiThread(() -> {
                 if (books.isEmpty()) {

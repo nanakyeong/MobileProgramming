@@ -5,7 +5,6 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
-    <!-- 상단 타이틀 -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,15 +28,10 @@
         android:textColor="#000000"
         android:textStyle="bold" />
 
-    <!-- 구분선 -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#CCCCCC" />
-
-    <!-- 책 정보: 이미지 + 텍스트 수평 배치 -->
-
-    <!-- 마음에 드는 구절 -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -114,7 +108,6 @@
         android:textColorHint="#888888"
         android:id="@+id/edit_thoughts" />
 
-    <!-- 여백 뷰 -->
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

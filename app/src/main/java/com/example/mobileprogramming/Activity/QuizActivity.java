@@ -58,19 +58,17 @@ public class QuizActivity extends AppCompatActivity {
         }).start();
     }
 
-    // Updated to match main screen: three-column horizontal layout, image and title centered
     private void updateQuizUI(List<Book> bookList) {
         GridLayout quizGrid = findViewById(R.id.quiz_bookGrid);
         if (quizGrid != null) {
             quizGrid.removeAllViews();
-            quizGrid.setColumnCount(3); // Ensure horizontal row-wise arrangement
+            quizGrid.setColumnCount(3);
 
             for (Book book : bookList) {
                 String title = book.getTitle();
                 String author = book.getAuthor();
                 String imagePath = book.getImagePath();
 
-                // Create a vertical LinearLayout for each book item
                 LinearLayout itemLayout = new LinearLayout(this);
                 itemLayout.setOrientation(LinearLayout.VERTICAL);
                 itemLayout.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -78,12 +76,11 @@ public class QuizActivity extends AppCompatActivity {
                 GridLayout.LayoutParams gridParams = new GridLayout.LayoutParams();
                 gridParams.width = GridLayout.LayoutParams.WRAP_CONTENT;
                 gridParams.height = LayoutParams.WRAP_CONTENT;
-                gridParams.setMargins(0, 5, 0, 5); // Optional: Add spacing between items
+                gridParams.setMargins(0, 5, 0, 5);
                 itemLayout.setLayoutParams(gridParams);
                 int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
                 itemLayout.setPadding(padding, padding, padding, padding);
 
-                // ImageView setup
                 ImageView imageView = new ImageView(this);
                 LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
                         (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics()),
@@ -108,7 +105,6 @@ public class QuizActivity extends AppCompatActivity {
                 });
                 itemLayout.addView(imageView);
 
-                // Title TextView setup
                 TextView titleView = new TextView(this);
                 titleView.setText(title);
                 titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
@@ -119,7 +115,6 @@ public class QuizActivity extends AppCompatActivity {
                 ));
                 itemLayout.addView(titleView);
 
-                // Add click listener to open QuizDetailActivity with book details
                 itemLayout.setOnClickListener(v -> {
                     Intent intent = new Intent(QuizActivity.this, QuizDetailActivity.class);
                     intent.putExtra("bookTitle", title);
@@ -128,7 +123,6 @@ public class QuizActivity extends AppCompatActivity {
                     startActivity(intent);
                 });
 
-                // Add item layout to GridLayout
                 quizGrid.addView(itemLayout);
             }
         }
