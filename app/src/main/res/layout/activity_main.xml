@@ -43,14 +43,33 @@
             android:minHeight="48dp"/>
     </LinearLayout>
 
-    <!-- 전체보기 -->
-    <TextView
-        android:id="@+id/bookCountText"
+    <!-- 전체보기 및 날짜 필터 -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="전체보기"
-        android:textStyle="bold"
-        android:padding="16dp"/>
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/bookCountText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="전체보기"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/buttonDateFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#DDDDDD"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:text="날짜"
+            android:textColor="#000000" />
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -75,8 +94,8 @@
 
                 <ImageView
                     android:id="@+id/bookCover"
-                    android:layout_width="100dp"
-                    android:layout_height="150dp"
+                    android:layout_width="80dp"
+                    android:layout_height="120dp"
                     android:scaleType="centerCrop" />
 
                 <TextView

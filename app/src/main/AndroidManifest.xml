@@ -13,7 +13,7 @@
         android:theme="@style/Theme.MobileProgramming"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".Activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MobileProgramming.NoActionBar">
             <intent-filter>
@@ -23,15 +23,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BookReportActivity"
+            android:name=".Activity.BookReportActivity"
             android:exported="true"
             android:theme="@style/Theme.MobileProgramming.NoActionBar" />
         <activity
-            android:name=".QuizActivity"
+            android:name=".Activity.QuizActivity"
             android:exported="true"
             android:theme="@style/Theme.MobileProgramming.NoActionBar" />
         <activity
-            android:name=".QuizDetailActivity"
+            android:name=".Activity.QuizDetailActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MobileProgramming.NoActionBar" />
+        <activity
+            android:name=".Activity.CalendarActivity"
             android:exported="true"
             android:theme="@style/Theme.MobileProgramming.NoActionBar" />
     </application>

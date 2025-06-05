@@ -1,4 +1,4 @@
-package com.example.mobileprogramming;
+package com.example.mobileprogramming.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,8 +19,15 @@ import java.io.IOException;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-
-import java.util.ArrayList;
+import com.example.mobileprogramming.Api.ApiClient;
+import com.example.mobileprogramming.AppDatabase;
+import com.example.mobileprogramming.Book;
+import com.example.mobileprogramming.BookDao;
+import com.example.mobileprogramming.BuildConfig;
+import com.example.mobileprogramming.Api.GoogleBooksApi;
+import com.example.mobileprogramming.GoogleBooksResponse;
+import com.example.mobileprogramming.QuizDataHolder;
+import com.example.mobileprogramming.R;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -85,6 +92,14 @@ public class BookReportActivity extends AppCompatActivity {
         });
 
         Button buttonRegister = findViewById(R.id.button);
+        // Hide "책 등록하기" button if book is already passed via intent
+        Intent checkIntent = getIntent();
+        if (checkIntent != null) {
+            String existingTitle = checkIntent.getStringExtra("bookTitle");
+            if (existingTitle != null && !existingTitle.isEmpty()) {
+                buttonRegister.setVisibility(View.GONE);
+            }
+        }
         buttonRegister.setOnClickListener(v -> {
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_book, null);
             EditText editTitle = dialogView.findViewById(R.id.editTitle);
@@ -170,12 +185,11 @@ public class BookReportActivity extends AppCompatActivity {
                 .show();
         });
 
-        // --- Add registration logic for main register button ---
         EditText editQuote = findViewById(R.id.edit_favorite_quote);
         EditText editThoughts = findViewById(R.id.edit_thoughts);
         Button buttonRegisterMain = findViewById(R.id.button_search);
 
-        // --- Show/hide edit & delete buttons based on "fromHome" intent extra ---
+
         Button editButton = findViewById(R.id.button_edit);
         Button deleteButton = findViewById(R.id.button_delete);
 
@@ -241,77 +255,92 @@ public class BookReportActivity extends AppCompatActivity {
             String quote = editQuote.getText().toString().trim();
             String thoughts = editThoughts.getText().toString().trim();
 
-            if (title.isEmpty() || author.isEmpty()) {
-                Toast.makeText(BookReportActivity.this, "책 제목과 저자를 입력해주세요.", Toast.LENGTH_SHORT).show();
+            // 개별 입력항목별로 안내 메시지
+            if (title.isEmpty()) {
+                Toast.makeText(BookReportActivity.this, "책 제목을 입력해주세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // 이미지 저장 코드 추가
-            Drawable drawable = imageBookCover.getDrawable();
-            String imagePath = null;
-
-            if (drawable != null) {
-                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                File imageFile = saveBitmapToFile(bitmap); // 절대경로 반환
-                if (imageFile != null) {
-                    imagePath = imageFile.getAbsolutePath();
-                    Log.d("BOOK_LOG", "📂 저장된 이미지 절대경로: " + imagePath);
-                } else {
-                    Log.d("BOOK_LOG", "이미지 저장 실패함");
-                }
-            } else {
-                Log.d("BOOK_LOG", "Drawable이 null임, 이미지 없음");
+            if (author.isEmpty()) {
+                Toast.makeText(BookReportActivity.this, "저자 이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (quote.isEmpty()) {
+                Toast.makeText(BookReportActivity.this, "인상 깊은 구절을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (thoughts.isEmpty()) {
+                Toast.makeText(BookReportActivity.this, "감상평을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-            Log.d("BOOK_LOG", "DB에 저장할 Book 객체 생성됨");
-            int bookId = getIntent().getIntExtra("bookId", -1);
-            Book bookToSave;
-            if (bookId != -1) {
-                bookToSave = new Book(title, author, imagePath, quote, thoughts);
-                bookToSave.setId(bookId);
-                Log.d("BOOK_LOG", "기존 책 수정: " + bookId);
-            } else {
-                bookToSave = new Book(title, author, imagePath, quote, thoughts);
-                Log.d("BOOK_LOG", "새 책 등록");
-            }
-
-            Book finalBookToSave = bookToSave;
+            final int finalBookId = getIntent().getIntExtra("bookId", -1);
             new Thread(() -> {
-                try {
-                    if (bookId != -1) {
-                        bookDao.updateBook(finalBookToSave);
-                        Log.d("BOOK_LOG", "✅ updateBook 호출");
-                    } else {
-                        bookDao.insertBook(finalBookToSave);
-                        Log.d("BOOK_LOG", "✅ insertBook 호출");
-                    }
-                    // After insertion or update, fetch updated books and update RecyclerView
-                    java.util.List<Book> updatedBooks = bookDao.getAllBooks();
-                    runOnUiThread(() -> {
-                        Toast.makeText(BookReportActivity.this, "책이 등록되었습니다.", Toast.LENGTH_SHORT).show();
-                        Intent intentToMain = new Intent(BookReportActivity.this, MainActivity.class);
-                        intentToMain.putExtra("bookTitle", finalBookToSave.getTitle());
-                        intentToMain.putExtra("bookAuthor", finalBookToSave.getAuthor());
-                        // Instead of passing image path, pass the image as byte array from imageBookCover
-                        Drawable drawable1 = imageBookCover.getDrawable();
-                        byte[] byteArray = null;
-                        if (drawable1 != null && drawable1 instanceof BitmapDrawable) {
-                            Bitmap bitmap = ((BitmapDrawable) drawable1).getBitmap();
-                            java.io.ByteArrayOutputStream stream = new java.io.ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byteArray = stream.toByteArray();
-                            intentToMain.putExtra("bookImage", byteArray);
-                        }
-                        // Save book title and image bytes for quiz (accumulate in list)
-                        QuizDataHolder.bookTitle.add(finalBookToSave.getTitle());
-                        QuizDataHolder.bookImageBytes.add(byteArray);
-                        startActivity(intentToMain);
+                // If no duplicate, proceed to insert or update the book
+                runOnUiThread(() -> {
+                    Drawable drawable = imageBookCover.getDrawable();
+                    String imagePath = null;
 
-                        finish(); // optional: close current activity
-                    });
-                } catch (Exception e) {
-                    Log.e("BOOK_DB", "DB 저장 실패: " + e.getMessage());
-                    e.printStackTrace();
-                }
+                    if (drawable != null) {
+                        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                        File imageFile = saveBitmapToFile(bitmap);
+                        if (imageFile != null) {
+                            imagePath = imageFile.getAbsolutePath();
+                        }
+                    }
+
+                    // Set readDateMillis to midnight today
+                    java.util.Calendar calendar = java.util.Calendar.getInstance();
+                    calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(java.util.Calendar.MINUTE, 0);
+                    calendar.set(java.util.Calendar.SECOND, 0);
+                    calendar.set(java.util.Calendar.MILLISECOND, 0);
+                    long readDateMillis = calendar.getTimeInMillis();
+                    Log.d("BookSave", "저장되는 readDateMillis: " + readDateMillis);
+
+                    Book bookToSave;
+                    int readPages = 0;
+                    if (finalBookId != -1) {
+                        bookToSave = new Book(title, author, imagePath, quote, thoughts, readPages, readDateMillis);
+                        bookToSave.setId(finalBookId);
+                    } else {
+                        bookToSave = new Book(title, author, imagePath, quote, thoughts, readPages, readDateMillis);
+                    }
+
+                    new Thread(() -> {
+                        try {
+                            if (finalBookId != -1) {
+                                bookDao.updateBook(bookToSave);
+                            } else {
+                                bookDao.insertBook(bookToSave);
+                            }
+
+                            runOnUiThread(() -> {
+                                Toast.makeText(BookReportActivity.this, "책이 등록되었습니다.", Toast.LENGTH_SHORT).show();
+                                Intent intentToMain = new Intent(BookReportActivity.this, MainActivity.class);
+                                intentToMain.putExtra("bookTitle", bookToSave.getTitle());
+                                intentToMain.putExtra("bookAuthor", bookToSave.getAuthor());
+
+                                Drawable drawable1 = imageBookCover.getDrawable();
+                                byte[] byteArray = null;
+                                if (drawable1 instanceof BitmapDrawable) {
+                                    Bitmap bitmap = ((BitmapDrawable) drawable1).getBitmap();
+                                    java.io.ByteArrayOutputStream stream = new java.io.ByteArrayOutputStream();
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                    byteArray = stream.toByteArray();
+                                    intentToMain.putExtra("bookImage", byteArray);
+                                }
+
+                                QuizDataHolder.bookTitle.add(bookToSave.getTitle());
+                                QuizDataHolder.bookImageBytes.add(byteArray);
+                                startActivity(intentToMain);
+                                finish();
+                            });
+                        } catch (Exception e) {
+                            Log.e("BOOK_DB", "DB 저장 실패: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }).start();
+                });
             }).start();
         });
         // Handle intent extras to pre-fill fields if provided
@@ -351,7 +380,6 @@ public class BookReportActivity extends AppCompatActivity {
                 Log.d("BOOK_INTENT", "이미지 설정됨");
             }
 
-            // [ADD] Handle imagePath after imageBytes
             if (imagePath != null) {
                 Log.d("BOOK_INTENT", "받은 이미지 경로: " + imagePath);
                 Bitmap bitmap = android.graphics.BitmapFactory.decodeFile(imagePath);
@@ -376,7 +404,7 @@ public class BookReportActivity extends AppCompatActivity {
             });
         }
     }
-    // Helper method to save bitmap to file and return File object (with absolute path)
+
     private File saveBitmapToFile(Bitmap bitmap) {
         try {
             File file = new File(getFilesDir(), "book_cover_" + System.currentTimeMillis() + ".png");
@@ -384,7 +412,7 @@ public class BookReportActivity extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
             out.close();
-            Log.d("BOOK_LOG", "📂 저장된 이미지 절대경로: " + file.getAbsolutePath());
+            Log.d("BOOK_LOG", "저장된 이미지 절대경로: " + file.getAbsolutePath());
             return file;
         } catch (IOException e) {
             e.printStackTrace();

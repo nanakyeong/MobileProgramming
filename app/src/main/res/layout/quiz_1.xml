@@ -56,10 +56,6 @@
         android:orientation="horizontal"
         android:weightSum="2">
 
-        <!-- O 버튼 -->
-
-        <!-- X 버튼 -->
-
         <Button
             android:id="@+id/quiz_o"
             android:layout_width="100dp"

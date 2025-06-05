@@ -1,6 +1,7 @@
-package com.example.mobileprogramming;
+package com.example.mobileprogramming.Api;
 
-import okhttp3.Call;
+import com.example.mobileprogramming.BuildConfig;
+
 import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -10,7 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class QuizService {
+public class QuizApi {
     private static final String API_KEY = BuildConfig.OPENAI_API_KEY;
 
     public void sendQuestion(String question, Callback callback) {

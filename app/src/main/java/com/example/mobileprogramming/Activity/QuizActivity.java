@@ -1,24 +1,22 @@
-package com.example.mobileprogramming;
+package com.example.mobileprogramming.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.util.Log;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap;
-import android.view.ViewGroup;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+
+import com.example.mobileprogramming.AppDatabase;
+import com.example.mobileprogramming.Book;
+import com.example.mobileprogramming.R;
 
 import java.util.List;
 
@@ -80,7 +78,7 @@ public class QuizActivity extends AppCompatActivity {
                 GridLayout.LayoutParams gridParams = new GridLayout.LayoutParams();
                 gridParams.width = GridLayout.LayoutParams.WRAP_CONTENT;
                 gridParams.height = LayoutParams.WRAP_CONTENT;
-                gridParams.setMargins(24, 24, 24, 24); // Optional: Add spacing between items
+                gridParams.setMargins(0, 5, 0, 5); // Optional: Add spacing between items
                 itemLayout.setLayoutParams(gridParams);
                 int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
                 itemLayout.setPadding(padding, padding, padding, padding);
@@ -160,8 +158,8 @@ public class QuizActivity extends AppCompatActivity {
 
             ImageView imageView = new ImageView(this);
             LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
-                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics()),
-                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics())
+                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics()),
+                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 130, getResources().getDisplayMetrics())
             );
             imageParams.gravity = Gravity.CENTER_HORIZONTAL;
             imageView.setLayoutParams(imageParams);

@@ -1,4 +1,4 @@
-package com.example.mobileprogramming;
+package com.example.mobileprogramming.Activity;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +8,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mobileprogramming.Api.QuizApi;
+import com.example.mobileprogramming.R;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,7 +19,6 @@ import java.util.Random;
 
 // Removed incorrect Callback import
 
-import okhttp3.Callback;
 import okhttp3.Response;
 
 public class QuizDetailActivity extends AppCompatActivity {
@@ -68,7 +70,7 @@ public class QuizDetailActivity extends AppCompatActivity {
                     "고유값: " + java.util.UUID.randomUUID();
         }
 
-        new QuizService().sendQuestion(prompt, new okhttp3.Callback() {
+        new QuizApi().sendQuestion(prompt, new okhttp3.Callback() {
             @Override
             public void onResponse(okhttp3.Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {

@@ -1,4 +1,6 @@
-package com.example.mobileprogramming;
+package com.example.mobileprogramming.Api;
+
+import com.example.mobileprogramming.GoogleBooksResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
